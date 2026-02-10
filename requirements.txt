@@ -1,0 +1,13 @@
+anthropic==0.28.1
+openai==1.36.1
+PyQt6==6.7.1
+PyObjC==10.2
+pydantic==2.6.4
+python-dotenv==1.0.0
+requests==2.31.0
+pyyaml==6.0.1
+pytest==8.0.0
+pytest-asyncio==0.23.0
+black==24.1.1
+flake8==7.0.0
+mypy==1.8.0
