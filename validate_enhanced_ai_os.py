@@ -61,7 +61,6 @@ def validate_skill_structure():
         "ai_os/workflows/enhanced_skill_generator.py",
         "ai_os/workflows/enhanced_skill_executor.py",
         "skills/skill-creator/SKILL.md",
-        "skills/enhanced-ai-os-build/SKILL.md",
         "templates/workflow.yaml",
         "ai_os/main.py"
     ]
@@ -87,8 +86,7 @@ def validate_yaml_frontmatter():
     print("=" * 50)
     
     skill_files = [
-        "skills/skill-creator/SKILL.md",
-        "skills/enhanced-ai-os-build/SKILL.md"
+        "skills/skill-creator/SKILL.md"
     ]
     
     all_valid = True
