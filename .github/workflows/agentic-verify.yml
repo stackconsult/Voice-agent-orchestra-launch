@@ -1,0 +1,56 @@
+name: Agentic Verification
+
+on:
+  push:
+    branches: ['main', 'feature/**']
+  pull_request:
+    branches: ['main']
+
+jobs:
+  agent-verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '24.x'
+
+      - name: 1. Integrity Gate (Deep Diagnostics)
+        run: |
+          echo "📁 Checking Core Infrastructure..."
+          for dir in .antigravity .antigravity/context .antigravity/skills .github/workflows docs src tests; do
+            if [ ! -d "$dir" ]; then echo "❌ $dir missing"; exit 1; fi
+            echo "✅ $dir"
+          done
+
+      - name: 2. Governance Gate (Required Files)
+        run: |
+          echo "📄 Checking Legal & Governance Files..."
+          for file in AGENTS.md README.md LICENSE CONTRIBUTING.md CHANGELOG.md .gitignore .env.example; do
+            if [ ! -f "$file" ]; then echo "❌ $file missing"; exit 1; fi
+            echo "✅ $file"
+          done
+
+      - name: 3. Vision Gate (Active Vision Check)
+        run: |
+          if grep -q "PENDING INPUT..." AGENTS.md || grep -q "Vision: DEFINED" AGENTS.md; then
+            # 'Vision: DEFINED' is the pass state from our local check, adjusting for GitHub Actions
+            if grep -q "Vision: DEFINED" AGENTS.md; then echo "✅ Vision Defined"; else echo "❌ Vision Pending"; exit 1; fi
+          fi
+
+      - name: 4. Style Gate (Lint & Format)
+        run: |
+          npm ci
+          npm run lint
+          npm run format -- --check
+
+      - name: 5. Logic Gate (Tests)
+        run: |
+          npm test
+
+      - name: 6. Boot Gate (Kernel Operation)
+        run: |
+          node src/index.js

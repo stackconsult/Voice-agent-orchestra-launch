@@ -1,0 +1,8 @@
+# execution.log
+
+[2026-02-08 17:15:20] INIT: TRAINING_MANUAL.md written.
+[2026-02-08 17:15:30] PHASE: Planning approved (LGTM).
+[2026-02-08 17:15:45] EXEC: Directories created (mkdir -p).
+[2026-02-08 17:16:00] EXEC: AGENTS.md (Kernel) written.
+[2026-02-08 17:16:10] EXEC: config.json and mcp_registry.json written.
+[2026-02-08 17:16:20] EXEC: Short-term memory (PLAN.md, execution.log) initialized.
