@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced AI-OS - Skill Engine UI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff6b6b;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.connected {
+            background: #51cf66;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            overflow-y: auto;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .tabs {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            border-bottom-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .tab:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .tab-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+        }
+
+        .skill-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .skill-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .skill-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .skill-description {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .skill-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .skill-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #dee2e6;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ff5252;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .analysis-result {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .analysis-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .analysis-item:last-child {
+            border-bottom: none;
+        }
+
+        .analysis-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .analysis-value {
+            color: #666;
+        }
+
+        .mode-local { color: #51cf66; }
+        .mode-cloud { color: #667eea; }
+        .mode-hybrid { color: #ff9f43; }
+
+        .execution-log {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        .log-entry {
+            margin-bottom: 0.5rem;
+            padding: 0.25rem 0;
+        }
+
+        .log-timestamp {
+            color: #a0aec0;
+            margin-right: 0.5rem;
+        }
+
+        .log-info { color: #63b3ed; }
+        .log-success { color: #68d391; }
+        .log-error { color: #fc8181; }
+        .log-warning { color: #f6ad55; }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border: 1px solid #fc8181;
+        }
+
+        .success-message {
+            background: #c6f6d5;
+            color: #2f855a;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border: 1px solid #68d391;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">🚀 Enhanced AI-OS</div>
+            <div class="status-indicator">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Connecting...</span>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <aside class="sidebar">
+                <h3>🎯 Quick Actions</h3>
+                <div style="margin-bottom: 2rem;">
+                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 0.5rem;" onclick="refreshSkills()">
+                        🔄 Refresh Skills
+                    </button>
+                    <button class="btn btn-secondary" style="width: 100%;" onclick="checkHealth()">
+                        🏥 Check Health
+                    </button>
+                </div>
+
+                <h3>📊 System Stats</h3>
+                <div id="systemStats">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="workspace">
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('skills')">📚 Skills</div>
+                    <div class="tab" onclick="switchTab('generate')">🎨 Generate</div>
+                    <div class="tab" onclick="switchTab('analyze')">🧠 Analyze</div>
+                    <div class="tab" onclick="switchTab('execute')">⚡ Execute</div>
+                </div>
+
+                <div id="skillsTab" class="tab-content">
+                    <h2>📚 Available Skills</h2>
+                    <div id="skillsList" class="skill-list">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="generateTab" class="tab-content hidden">
+                    <h2>🎨 Generate New Skill</h2>
+                    <form id="generateForm">
+                        <div class="form-group">
+                            <label class="form-label">Skill Description</label>
+                            <textarea class="form-textarea" id="skillPrompt" placeholder="Describe what you want the skill to do..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Author (optional)</label>
+                            <input type="text" class="form-input" id="skillAuthor" placeholder="AI-OS User">
+                        </div>
+                        <button type="submit" class="btn btn-primary">🚀 Generate Skill</button>
+                    </form>
+                    <div id="generateResult"></div>
+                </div>
+
+                <div id="analyzeTab" class="tab-content hidden">
+                    <h2>🧠 Task Analysis</h2>
+                    <form id="analyzeForm">
+                        <div class="form-group">
+                            <label class="form-label">Task Description</label>
+                            <textarea class="form-textarea" id="taskDescription" placeholder="Describe the task you want to analyze..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">🔍 Analyze Task</button>
+                    </form>
+                    <div id="analyzeResult"></div>
+                </div>
+
+                <div id="executeTab" class="tab-content hidden">
+                    <h2>⚡ Execute Skill</h2>
+                    <form id="executeForm">
+                        <div class="form-group">
+                            <label class="form-label">Skill Name</label>
+                            <input type="text" class="form-input" id="executeSkillName" placeholder="Enter skill name...">
+                        </div>
+                        <button type="submit" class="btn btn-primary">▶️ Execute Skill</button>
+                    </form>
+                    <div id="executeResult"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+        
+        let currentTab = 'skills';
+        let skills = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            checkHealth();
+            refreshSkills();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('generateForm').addEventListener('submit', handleGenerateSkill);
+            document.getElementById('analyzeForm').addEventListener('submit', handleAnalyzeTask);
+            document.getElementById('executeForm').addEventListener('submit', handleExecuteSkill);
+        }
+
+        async function checkHealth() {
+            try {
+                const result = await ipcRenderer.invoke('api-health-check');
+                const statusDot = document.getElementById('statusDot');
+                const statusText = document.getElementById('statusText');
+                
+                if (result.success) {
+                    statusDot.classList.add('connected');
+                    statusText.textContent = 'Connected';
+                    updateSystemStats(result.data);
+                } else {
+                    statusDot.classList.remove('connected');
+                    statusText.textContent = 'Disconnected';
+                }
+            } catch (error) {
+                console.error('Health check failed:', error);
+                document.getElementById('statusDot').classList.remove('connected');
+                document.getElementById('statusText').textContent = 'Error';
+            }
+        }
+
+        function updateSystemStats(data) {
+            const statsDiv = document.getElementById('systemStats');
+            statsDiv.innerHTML = `
+                <div style="margin-bottom: 1rem;">
+                    <strong>Status:</strong> <span style="color: #51cf66;">${data.status}</span>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <strong>Version:</strong> ${data.version}
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <strong>Skills:</strong> ${data.skills_available}
+                </div>
+                <div>
+                    <strong>Components:</strong>
+                    ${Object.entries(data.components).map(([key, status]) => 
+                        `<div style="font-size: 0.9rem; color: #666;">• ${key}: ${status}</div>`
+                    ).join('')}
+                </div>
+            `;
+        }
+
+        async function refreshSkills() {
+            try {
+                const result = await ipcRenderer.invoke('api-list-skills');
+                const skillsList = document.getElementById('skillsList');
+                
+                if (result.success) {
+                    skills = result.data.skills;
+                    renderSkills();
+                } else {
+                    skillsList.innerHTML = `<div class="error-message">Failed to load skills: ${result.error}</div>`;
+                }
+            } catch (error) {
+                console.error('Refresh skills failed:', error);
+                document.getElementById('skillsList').innerHTML = 
+                    `<div class="error-message">Failed to load skills: ${error.message}</div>`;
+            }
+        }
+
+        function renderSkills() {
+            const skillsList = document.getElementById('skillsList');
+            
+            if (skills.length === 0) {
+                skillsList.innerHTML = '<p style="text-align: center; color: #666;">No skills found. Generate one to get started!</p>';
+                return;
+            }
+
+            skillsList.innerHTML = skills.map(skill => `
+                <div class="skill-card" onclick="viewSkillDetails('${skill.name}')">
+                    <div class="skill-name">${skill.name}</div>
+                    <div class="skill-description">${skill.description}</div>
+                    <div class="skill-meta">
+                        <span>📁 ${skill.path}</span>
+                    </div>
+                    <div class="skill-actions">
+                        <button class="btn btn-primary" onclick="executeSkill('${skill.name}', event)">▶️ Execute</button>
+                        <button class="btn btn-secondary" onclick="viewSkillDetails('${skill.name}', event)">📋 Details</button>
+                        <button class="btn btn-danger" onclick="deleteSkill('${skill.name}', event)">🗑️ Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function executeSkill(skillName, event) {
+            if (event) event.stopPropagation();
+            
+            try {
+                const result = await ipcRenderer.invoke('api-execute-skill', skillName);
+                const executeResult = document.getElementById('executeResult');
+                
+                if (result.success) {
+                    executeResult.innerHTML = `
+                        <div class="success-message">
+                            <h3>✅ Skill Executed Successfully!</h3>
+                            <div class="analysis-result">
+                                <div class="analysis-item">
+                                    <span class="analysis-label">Skill:</span>
+                                    <span class="analysis-value">${result.data.skill}</span>
+                                </div>
+                                <div class="analysis-item">
+                                    <span class="analysis-label">Steps Completed:</span>
+                                    <span class="analysis-value">${result.data.steps_completed}</span>
+                                </div>
+                                <div class="analysis-item">
+                                    <span class="analysis-label">Execution Time:</span>
+                                    <span class="analysis-value">${result.data.execution_time?.toFixed(2)}s</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    switchTab('execute');
+                } else {
+                    executeResult.innerHTML = `<div class="error-message">Execution failed: ${result.error}</div>`;
+                    switchTab('execute');
+                }
+            } catch (error) {
+                console.error('Execute skill failed:', error);
+                document.getElementById('executeResult').innerHTML = 
+                    `<div class="error-message">Execution failed: ${error.message}</div>`;
+                switchTab('execute');
+            }
+        }
+
+        async function viewSkillDetails(skillName, event) {
+            if (event) event.stopPropagation();
+            
+            try {
+                const result = await ipcRenderer.invoke('api-get-skill-details', skillName);
+                
+                if (result.success) {
+                    const details = result.data;
+                    alert(`Skill Details for ${skillName}:\n\nPath: ${details.path}\nSkill File: ${details.skill_file_exists ? '✅' : '❌'}\nWorkflow File: ${details.workflow_file_exists ? '✅' : '❌'}`);
+                } else {
+                    alert(`Failed to get skill details: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Get skill details failed:', error);
+                alert(`Failed to get skill details: ${error.message}`);
+            }
+        }
+
+        async function deleteSkill(skillName, event) {
+            if (event) event.stopPropagation();
+            
+            try {
+                const result = await ipcRenderer.invoke('api-delete-skill', skillName);
+                
+                if (result.success) {
+                    await refreshSkills();
+                    alert(`Skill "${skillName}" deleted successfully!`);
+                } else {
+                    alert(`Failed to delete skill: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Delete skill failed:', error);
+                alert(`Failed to delete skill: ${error.message}`);
+            }
+        }
+
+        async function handleGenerateSkill(event) {
+            event.preventDefault();
+            
+            const prompt = document.getElementById('skillPrompt').value;
+            const author = document.getElementById('skillAuthor').value || 'AI-OS User';
+            
+            if (!prompt.trim()) {
+                document.getElementById('generateResult').innerHTML = 
+                    '<div class="error-message">Please enter a skill description</div>';
+                return;
+            }
+
+            const generateResult = document.getElementById('generateResult');
+            generateResult.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+            try {
+                const result = await ipcRenderer.invoke('api-generate-skill', prompt, author);
+                
+                if (result.success) {
+                    generateResult.innerHTML = `
+                        <div class="success-message">
+                            <h3>✅ Skill Generated Successfully!</h3>
+                            <div class="analysis-result">
+                                <div class="analysis-item">
+                                    <span class="analysis-label">Skill Name:</span>
+                                    <span class="analysis-value">${result.data.skill_name}</span>
+                                </div>
+                                <div class="analysis-item">
+                                    <span class="analysis-label">Path:</span>
+                                    <span class="analysis-value">${result.data.path}</span>
+                                </div>
+                                <div class="analysis-item">
+                                    <span class="analysis-label">Mode:</span>
+                                    <span class="analysis-value mode-${result.data.mode}">${result.data.mode}</span>
+                                </div>
+                                <div class="analysis-item">
+                                    <span class="analysis-label">Model:</span>
+                                    <span class="analysis-value">${result.data.model}</span>
+                                </div>
+                                <div class="analysis-item">
+                                    <span class="analysis-label">Internet Required:</span>
+                                    <span class="analysis-value">${result.data.internet_required ? 'Yes' : 'No'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    await refreshSkills();
+                } else {
+                    generateResult.innerHTML = `<div class="error-message">Generation failed: ${result.error}</div>`;
+                }
+            } catch (error) {
+                console.error('Generate skill failed:', error);
+                generateResult.innerHTML = `<div class="error-message">Generation failed: ${error.message}</div>`;
+            }
+        }
+
+        async function handleAnalyzeTask(event) {
+            event.preventDefault();
+            
+            const description = document.getElementById('taskDescription').value;
+            
+            if (!description.trim()) {
+                document.getElementById('analyzeResult').innerHTML = 
+                    '<div class="error-message">Please enter a task description</div>';
+                return;
+            }
+
+            const analyzeResult = document.getElementById('analyzeResult');
+            analyzeResult.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+            try {
+                const result = await ipcRenderer.invoke('api-analyze-task', description);
+                
+                if (result.success) {
+                    const data = result.data;
+                    analyzeResult.innerHTML = `
+                        <div class="analysis-result">
+                            <h3>🧠 Task Analysis Results</h3>
+                            <div class="analysis-item">
+                                <span class="analysis-label">Execution Mode:</span>
+                                <span class="analysis-value mode-${data.mode}">${data.mode.toUpperCase()}</span>
+                            </div>
+                            <div class="analysis-item">
+                                <span class="analysis-label">Recommended Model:</span>
+                                <span class="analysis-value">${data.model}</span>
+                            </div>
+                            <div class="analysis-item">
+                                <span class="analysis-label">Internet Required:</span>
+                                <span class="analysis-value">${data.internet_required ? 'Yes' : 'No'}</span>
+                            </div>
+                            ${data.fallback_model ? `
+                            <div class="analysis-item">
+                                <span class="analysis-label">Fallback Model:</span>
+                                <span class="analysis-value">${data.fallback_model}</span>
+                            </div>
+                            ` : ''}
+                            <div class="analysis-item">
+                                <span class="analysis-label">Reasoning:</span>
+                                <span class="analysis-value">${data.reasoning}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    analyzeResult.innerHTML = `<div class="error-message">Analysis failed: ${result.error}</div>`;
+                }
+            } catch (error) {
+                console.error('Analyze task failed:', error);
+                analyzeResult.innerHTML = `<div class="error-message">Analysis failed: ${error.message}</div>`;
+            }
+        }
+
+        async function handleExecuteSkill(event) {
+            event.preventDefault();
+            
+            const skillName = document.getElementById('executeSkillName').value;
+            
+            if (!skillName.trim()) {
+                document.getElementById('executeResult').innerHTML = 
+                    '<div class="error-message">Please enter a skill name</div>';
+                return;
+            }
+
+            await executeSkill(skillName);
+        }
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.remove('hidden');
+            
+            // Add active class to selected tab
+            event.target.classList.add('active');
+            
+            currentTab = tabName;
+        }
+
+        // Auto-refresh health status every 30 seconds
+        setInterval(checkHealth, 30000);
+    </script>
+</body>
+</html>
