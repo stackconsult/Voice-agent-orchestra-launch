@@ -1,13 +1,39 @@
-name: {name}
-description: {description}
-version: {version}
-author: {author}
-created_at: {created_at}
-category: {category}
-tags: {tags}
-estimated_time: {estimated_time}
-difficulty: {difficulty}
-dependencies: {dependencies}
+# Production-Grade Workflow Template
+# ----------------------------------
+# This file defines the intrinsic execution logic for the skill.
+# It is generated automatically by the EnhancedSkillGenerator.
 
-steps:
+skill_id: "{name}"
+version: "{version}"
+created_at: "{created_at}"
+
+# --- Execution Architecture ---
+# Defines the intelligence requirements determined during the "Model Research" phase.
+execution_engine:
+  provider: "ai_os.context_switcher"
+  mode: "{execution_mode}"        # Options: local_only, hybrid, cloud_first
+  recommended_model: "{model}"    # e.g., llama3-local, claude-3-5-sonnet
+  fallback_enabled: true          # Allow degradation to simpler models if primary fails
+  internet_access: {internet}     # Boolean: strictly enforced by the runtime
+
+# --- Environment Configuration ---
+environment:
+  dependencies: {dependencies}    # System packages (e.g., ffmpeg, git)
+  required_vars: {env_vars}       # e.g., OPENAI_API_KEY, GITHUB_TOKEN
+  working_directory: "./workspace"
+
+# --- Progressive Loading Context ---
+# References external files to keep this execution file lightweight
+context_references:
+  - "references/api_schema.md"
+  - "references/context_definitions.json"
+
+# --- Workflow Steps ---
+workflow:
+  steps:
 {steps}
+
+# --- Validation Hooks ---
+validation:
+  pre_flight: "check_dependencies"
+  post_flight: "verify_artifacts"

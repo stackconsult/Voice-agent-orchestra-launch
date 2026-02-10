@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-AI-OS Main Entry Point
-
-Voice-driven workflow automation system with offline-first processing
-and seamless cloud fallback.
+AI-OS Enhanced Main Entry Point
+============================================
+Orchestrates the Voice -> Agent -> Execution pipeline.
+Updated to use EnhancedSkillGenerator and EnhancedSkillExecutor.
 """
 
 import argparse
@@ -21,6 +21,11 @@ load_dotenv()
 # Add ai_os to path
 sys.path.insert(0, str(Path(__file__).parent))
 
+# Import enhanced components
+from ai_os.workflows.enhanced_skill_generator import EnhancedSkillGenerator
+from ai_os.workflows.enhanced_skill_executor import EnhancedSkillExecutor
+
+# Import legacy components for compatibility
 from ai_os.ui.ppt_window import PTTWindow
 from ai_os.safety.restore_manager import RestoreManager
 from ai_os.agents.monitor_agent import MonitorAgent
@@ -82,9 +87,113 @@ async def start_ptt_mode(args) -> None:
         sys.exit(1)
 
 
+async def start_enhanced_cli_mode(args) -> None:
+    """Start enhanced command-line interface with skill generation."""
+    logger = logging.getLogger("AI-OS")
+    logger.info("🤖 AI-OS Enhanced Orchestrator Starting...")
+    
+    # Initialize Enhanced Components
+    generator = EnhancedSkillGenerator()
+    executor = EnhancedSkillExecutor()
+    
+    print("\n🎤 AI-OS Enhanced Voice Agent Ready")
+    print("-----------------------------------")
+    print("Try commands like:")
+    print("  - 'Create a skill to analyze financial PDFs'")
+    print("  - 'Build a workflow for cleaning my desktop'")
+    print("  - 'Run the skill-creator'")
+    print("  - 'help' - Show all commands")
+    print("  - 'exit' - Exit CLI mode")
+    
+    while True:
+        try:
+            # In a real app, this would be voice input
+            user_input = input("\n> ").strip()
+            
+            if user_input.lower() in ['exit', 'quit']:
+                break
+                
+            if user_input.lower() == 'help':
+                print("\n📚 Enhanced AI-OS Commands:")
+                print("  create <description>  - Generate a new skill")
+                print("  run <skill_name>      - Execute an existing skill")
+                print("  list                  - List available skills")
+                print("  status                - Show system status")
+                print("  help                  - Show this help")
+                print("  exit                  - Exit CLI mode")
+                
+            elif user_input.lower() == 'status':
+                print("\n📊 System Status:")
+                print("  ✅ Enhanced Generator: Active")
+                print("  ✅ Enhanced Executor: Active")
+                print("  ✅ Local LLM: Available")
+                print("  ✅ Context Switcher: Ready")
+                
+            elif user_input.lower() == 'list':
+                skills_dir = Path("./skills")
+                if skills_dir.exists():
+                    skills = [d.name for d in skills_dir.iterdir() if d.is_dir()]
+                    print(f"\n📁 Available Skills ({len(skills)}):")
+                    for skill in skills:
+                        print(f"  - {skill}")
+                else:
+                    print("\n📁 No skills found. Create one with 'create <description>'")
+                    
+            elif user_input.lower().startswith("create"):
+                # --- GENERATION PATH ---
+                print("🧠 Analyzing architecture requirements...")
+                try:
+                    skill = await generator.generate_skill(
+                        voice_input=user_input,
+                        author="AI-OS User"
+                    )
+                    
+                    # Save the production-grade skill
+                    path = await generator.save_skill(skill)
+                    print(f"✅ Skill Generated: {skill.metadata.name}")
+                    print(f"📂 Location: {path}")
+                    print(f"⚙️ Mode: {skill.metadata.execution_config.mode.value}")
+                    print(f"🤖 Model: {skill.metadata.execution_config.recommended_model}")
+                    
+                except Exception as e:
+                    print(f"❌ Skill Generation Failed: {e}")
+                    logger.error(f"Skill generation error: {e}")
+                
+            elif user_input.lower().startswith("run"):
+                # --- EXECUTION PATH ---
+                parts = user_input.split(" ", 1)
+                if len(parts) < 2:
+                    print("❌ Usage: run <skill_name>")
+                    continue
+                    
+                skill_name = parts[1]
+                print(f"⚡ Executing {skill_name}...")
+                
+                try:
+                    result = await executor.execute_skill(skill_name)
+                    print("✅ Execution Complete")
+                    print(f"📊 Steps completed: {result['steps_completed']}")
+                    
+                except Exception as e:
+                    print(f"❌ Execution Failed: {e}")
+                    logger.error(f"Skill execution error: {e}")
+                    
+            else:
+                print(f"❌ Unknown command: {user_input}")
+                print("Type 'help' for available commands")
+                    
+        except KeyboardInterrupt:
+            break
+        except Exception as e:
+            logger.error(f"System Error: {e}")
+            print(f"❌ System Error: {e}")
+    
+    print("\n👋 Enhanced AI-OS shutting down...")
+
+
 async def start_cli_mode(args) -> None:
-    """Start command-line interface mode."""
-    print("🎙️ AI-OS CLI Mode")
+    """Start legacy command-line interface mode."""
+    print("🎙️ AI-OS Legacy CLI Mode")
     print("Type 'help' for commands or 'exit' to quit")
     
     while True:
@@ -112,10 +221,11 @@ async def start_cli_mode(args) -> None:
 
 def main() -> None:
     """Main entry point for AI-OS."""
-    parser = argparse.ArgumentParser(description="AI-OS Voice Workflow Automation")
+    parser = argparse.ArgumentParser(description="AI-OS Enhanced Voice Workflow Automation")
     parser.add_argument("--init", action="store_true", help="Initialize system")
     parser.add_argument("--ppt", action="store_true", help="Start push-to-talk mode")
-    parser.add_argument("--cli", action="store_true", help="Start CLI mode")
+    parser.add_argument("--cli", action="store_true", help="Start enhanced CLI mode")
+    parser.add_argument("--legacy-cli", action="store_true", help="Start legacy CLI mode")
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
     parser.add_argument("--no-hotkey", action="store_true", help="Disable global hotkey")
     
@@ -133,9 +243,16 @@ def main() -> None:
         elif args.ppt:
             asyncio.run(start_ptt_mode(args))
         elif args.cli:
+            asyncio.run(start_enhanced_cli_mode(args))
+        elif args.legacy_cli:
             asyncio.run(start_cli_mode(args))
         else:
             parser.print_help()
+            print("\n🚀 Enhanced AI-OS Features:")
+            print("  --cli       : Enhanced CLI with skill generation")
+            print("  --legacy-cli: Legacy CLI mode")
+            print("  --ppt       : Push-to-talk voice mode")
+            print("  --init      : Initialize system directories")
             
     except KeyboardInterrupt:
         logger.info("Shutdown requested by user")

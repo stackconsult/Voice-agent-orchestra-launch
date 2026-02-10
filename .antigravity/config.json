@@ -1,0 +1,11 @@
+{
+  "autonomy_level": 1,
+  "cost_budget": 5.0,
+  "whitelist": ["github.com", "npmjs.com", "electronjs.org"],
+  "tech_stack": {
+    "runtime": "node v24+",
+    "framework": "electron",
+    "automation": "antigravity"
+  },
+  "session_id": "template-master-ground-zero"
+}
