@@ -1,0 +1,13 @@
+name: {name}
+description: {description}
+version: {version}
+author: {author}
+created_at: {created_at}
+category: {category}
+tags: {tags}
+estimated_time: {estimated_time}
+difficulty: {difficulty}
+dependencies: {dependencies}
+
+steps:
+{steps}
