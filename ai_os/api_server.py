@@ -28,8 +28,8 @@ from pydantic import BaseModel, Field
 import uvicorn
 
 # Import enhanced components
-from .workflows.enhanced_skill_executor import EnhancedSkillExecutor
-from .workflows.enhanced_skill_generator import EnhancedSkillGenerator, ModelSelector
+from ai_os.workflows.enhanced_skill_executor import EnhancedSkillExecutor
+from ai_os.workflows.enhanced_skill_generator import EnhancedSkillGenerator, ModelSelector
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
