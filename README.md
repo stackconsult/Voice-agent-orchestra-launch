@@ -1,6 +1,6 @@
 # Enhanced AI-OS - Voice-Driven Workflow Automation System
 
-A complete, production-ready AI Operating System with **Enhanced Skill Engine**
+A complete, production-ready AI Operating System Template with **Enhanced Skill Engine**
 for voice-driven workflow automation. Features intelligent model selection,
 progressive loading architecture, security enforcement, and a modern Electron
 UI interface. Processes voice commands offline, automatically generates
