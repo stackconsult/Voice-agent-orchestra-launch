@@ -240,10 +240,15 @@ python demo_enhanced_ai_os.py
 ```
 
 This script handles:
+
 - Python virtual environment setup
+
 - All dependency installation (voice, API, UI)
+
 - System dependencies (FFmpeg, Ollama, whisper.cpp)
+
 - Environment configuration
+
 - Validation and testing
 
 ### 📦 Manual Installation
