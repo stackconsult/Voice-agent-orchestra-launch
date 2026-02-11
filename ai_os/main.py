@@ -25,6 +25,9 @@ sys.path.insert(0, str(Path(__file__).parent))
 from ai_os.workflows.enhanced_skill_generator import EnhancedSkillGenerator
 from ai_os.workflows.enhanced_skill_executor import EnhancedSkillExecutor
 
+# Import voice components
+from ai_os.voice.voice_manager import VoiceManager
+
 # Import legacy components for compatibility
 from ai_os.ui.ppt_window import PTTWindow
 from ai_os.safety.restore_manager import RestoreManager
@@ -219,11 +222,19 @@ async def start_cli_mode(args) -> None:
     print("👋 Goodbye!")
 
 
+def start_voice_mode(args):
+    """Start voice activator mode."""
+    base_path = Path(__file__).parent.parent
+    voice_manager = VoiceManager(base_path)
+    voice_manager.start_listening_loop()
+
+
 def main() -> None:
     """Main entry point for AI-OS."""
     parser = argparse.ArgumentParser(description="AI-OS Enhanced Voice Workflow Automation")
     parser.add_argument("--init", action="store_true", help="Initialize system")
     parser.add_argument("--ppt", action="store_true", help="Start push-to-talk mode")
+    parser.add_argument("--voice", action="store_true", help="Start voice activator mode")
     parser.add_argument("--cli", action="store_true", help="Start enhanced CLI mode")
     parser.add_argument("--legacy-cli", action="store_true", help="Start legacy CLI mode")
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
@@ -240,6 +251,8 @@ def main() -> None:
     try:
         if args.init:
             init_system()
+        elif args.voice:
+            start_voice_mode(args)
         elif args.ppt:
             asyncio.run(start_ptt_mode(args))
         elif args.cli:
@@ -249,6 +262,7 @@ def main() -> None:
         else:
             parser.print_help()
             print("\n🚀 Enhanced AI-OS Features:")
+            print("  --voice     : Voice activator mode (Cmd+Shift+V)")
             print("  --cli       : Enhanced CLI with skill generation")
             print("  --legacy-cli: Legacy CLI mode")
             print("  --ppt       : Push-to-talk voice mode")

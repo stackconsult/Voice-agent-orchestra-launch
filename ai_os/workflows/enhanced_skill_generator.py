@@ -394,6 +394,92 @@ See `references/` directory for API documentation and templates.
         logger.info(f"✅ Skill '{skill.metadata.name}' created at {skill_dir}")
         return skill_dir
 
+    def generate_skill_from_voice(self, voice_command: str) -> Dict[str, Any]:
+        """
+        Synchronous wrapper for the async generation process.
+        Called by VoiceManager.
+        """
+        return asyncio.run(self._generate_async(voice_command))
+
+    async def _generate_async(self, voice_command: str) -> Dict[str, Any]:
+        print(f"⚙️ Generating skill from: '{voice_command}'")
+        
+        # 1. Load Context
+        templates = self._load_templates()
+        
+        # 2. Consult Local Intelligence
+        workflow_data = await self.agent.generate_structured_workflow(voice_command, templates)
+        
+        if "error" in workflow_data:
+            return {"status": "error", "message": workflow_data["error"]}
+
+        # 3. Construct Skill Directory
+        skill_name = workflow_data.get("name", "unnamed_skill")
+        new_skill_dir = self.skills_dir / skill_name
+        new_skill_dir.mkdir(parents=True, exist_ok=True)
+        (new_skill_dir / "references").mkdir(exist_ok=True)
+
+        # 4. Generate SKILL.md Content
+        skill_md_content = self._construct_skill_md(workflow_data)
+        
+        # 5. Write to Disk
+        skill_file_path = new_skill_dir / "SKILL.md"
+        with open(skill_file_path, "w") as f:
+            f.write(skill_md_content)
+            
+        print(f"✅ Skill saved to: {skill_file_path}")
+        return {"status": "success", "name": skill_name, "path": str(skill_file_path)}
+
+    def _load_templates(self) -> Dict[str, str]:
+        """Loads the reference templates we built in the previous step"""
+        templates = {}
+        
+        # Load main SKILL.md template
+        template_path = self.skills_dir / "skill-creator" / "SKILL.md"
+        if template_path.exists():
+            with open(template_path, "r") as f:
+                templates["main"] = f.read()
+                
+        return templates
+
+    def _construct_skill_md(self, data: Dict[str, Any]) -> str:
+        """Builds the final markdown content from the JSON data"""
+        from datetime import datetime
+        
+        timestamp = datetime.now().isoformat()
+        
+        # Frontmatter
+        md = "---\n"
+        md += f"name: {data.get('name')}\n"
+        md += f"description: {data.get('description')}\n"
+        md += f"version: 1.0.0\n"
+        md += f"created: {timestamp}\n"
+        
+        triggers = data.get("triggers", [])
+        if triggers:
+            md += "triggers:\n"
+            for t in triggers:
+                md += f"  - \"{t}\"\n"
+        
+        md += "model_requirements:\n  primary: \"local\"\n"
+        md += "---\n\n"
+        
+        # Body
+        md += f"# {data.get('name').replace('-', ' ').title()}\n\n"
+        md += f"{data.get('description')}\n\n"
+        
+        md += "## Workflow\n\n"
+        
+        for idx, step in enumerate(data.get("steps", [])):
+            md += f"### Step {idx + 1}: {step.get('name')}\n\n"
+            
+            cmd_type = step.get('type', 'terminal')
+            cmd = step.get('command', '# No command provided')
+            
+            md += f"```{cmd_type}\n{cmd}\n```\n\n"
+            
+        return md
+
 # --- Intrinsic Execution Block ---
 if __name__ == "__main__":
     async def main():

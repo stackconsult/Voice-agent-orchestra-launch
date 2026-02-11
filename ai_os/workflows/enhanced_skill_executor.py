@@ -192,6 +192,56 @@ class EnhancedSkillExecutor:
         except Exception as e:
             raise RuntimeError(f"Python execution failed: {str(e)}")
 
+    def find_and_execute(self, command: str) -> Dict[str, Any]:
+        """
+        Finds a skill matching the command triggers and executes it.
+        """
+        skill_path = self._find_matching_skill(command)
+        
+        if not skill_path:
+            print(f"❌ No matching skill found for: {command}")
+            return {"status": "not_found"}
+            
+        print(f"⚡ Executing skill: {skill_path.parent.name}")
+        # In the next step, we will implement the actual execution engine
+        # that parses the SKILL.md steps (terminal, python, applescript)
+        # and runs them.
+        
+        return {"status": "executed_mock", "skill": skill_path.parent.name}
+
+    def _find_matching_skill(self, command: str) -> Path:
+        """Scans all SKILL.md files for matching triggers"""
+        command_lower = command.lower()
+        
+        skills_dir = Path.cwd() / "skills"
+        if not skills_dir.exists():
+            return None
+            
+        for skill_folder in skills_dir.iterdir():
+            if skill_folder.is_dir():
+                skill_file = skill_folder / "SKILL.md"
+                if skill_file.exists():
+                    triggers = self._parse_triggers(skill_file)
+                    for trigger in triggers:
+                        if trigger in command_lower:
+                            return skill_file
+        return None
+
+    def _parse_triggers(self, file_path: Path) -> list:
+        """Extracts triggers from YAML frontmatter manually"""
+        triggers = []
+        try:
+            with open(file_path, "r") as f:
+                content = f.read()
+                if content.startswith("---"):
+                    # Quick and dirty YAML extraction to avoid parsing whole file
+                    frontmatter = content.split("---")[1]
+                    data = yaml.safe_load(frontmatter)
+                    triggers = [t.lower() for t in data.get("triggers", [])]
+        except Exception as e:
+            print(f"Error parsing triggers for {file_path}: {e}")
+        return triggers
+
 # --- Testing Block ---
 if __name__ == "__main__":
     async def test_executor():

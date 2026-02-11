@@ -16,6 +16,7 @@ from pathlib import Path
 import subprocess
 import requests
 from enum import Enum
+import aiohttp
 
 logger = logging.getLogger(__name__)
 
@@ -466,6 +467,72 @@ Example workflows:
             "max_retries": self.max_retries
         }
     
+    async def generate_response(self, prompt: str, system_context: str = "") -> str:
+        """
+        Generates a text response from the local LLM.
+        """
+        full_prompt = f"{system_context}\n\nUser Request: {prompt}" if system_context else prompt
+        
+        payload = {
+            "model": self.model_name,
+            "prompt": full_prompt,
+            "stream": False,
+            "options": {
+                "temperature": 0.2, # Low temp for structured tasks
+                "num_ctx": 4096     # Sufficient context window
+            }
+        }
+
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(self.api_endpoint, json=payload) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        return data.get("response", "")
+                    else:
+                        return f"Error: Local LLM returned status {response.status}"
+        except Exception as e:
+            return f"Error connecting to Ollama: {str(e)}"
+
+    async def generate_structured_workflow(self, voice_command: str, templates: Dict[str, str]) -> Dict[str, Any]:
+        """
+        Specialized method to turn voice commands into JSON workflows.
+        """
+        system_prompt = f"""
+        You are an AI Automation Architect. Your goal is to convert a voice command into a structured automation workflow.
+        
+        Use the following templates as a guide:
+        {json.dumps(templates, indent=2)}
+        
+        You must return ONLY a valid JSON object representing the workflow. No conversational text.
+        
+        Structure required:
+        {{
+            "name": "skill-name-kebab-case",
+            "description": "Short description of what it does",
+            "triggers": ["trigger 1", "trigger 2"],
+            "steps": [
+                {{
+                    "name": "Step Name",
+                    "type": "terminal" | "python" | "applescript",
+                    "command": "The actual code or command to run"
+                }}
+            ]
+        }}
+        """
+        
+        response_text = await self.generate_response(voice_command, system_prompt)
+        
+        # Clean up response (sometimes LLMs add markdown fences)
+        clean_json = response_text.replace("```json", "").replace("```", "").strip()
+        
+        try:
+            return json.loads(clean_json)
+        except json.JSONDecodeError:
+            # Fallback: Simple extraction or retry logic could go here
+            print(f"⚠️ Failed to parse JSON from LLM: {response_text}")
+            return {"error": "Invalid JSON generated", "raw": response_text}
+
     def validate_workflow(self, workflow: GeneratedWorkflow) -> Dict[str, Any]:
         """
         Validate a generated workflow.
