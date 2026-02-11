@@ -14,11 +14,13 @@ comprehensive error handling.
 
 - **Intelligent Model Selection**: Automatic local vs cloud model decisions
 
-- **Progressive Loading Architecture**: Fast skill discovery with heavy context on-demand
+- **Progressive Loading Architecture**: Fast skill discovery with heavy
+  context on-demand
 
 - **Security Enforcement**: Runtime architectural compliance and network blocking
 
-- **YAML Frontmatter Skills**: Machine-readable triggers and configuration
+- **YAML Frontmatter Skills**: Machine-readable triggers and
+  configuration
 
 - **Meta-Skill Creator**: Self-referential skill generation system
 
@@ -137,13 +139,15 @@ cd ui && npm install && cd ..
 python validate_enhanced_ai_os.py
 ```
 
-# Initialize the system
+## Initialize the System
+
+```bash
 python -m ai_os.main --init
 ```
 
 ### Enhanced Usage Options
 
-#### 🚀 **Full Stack (Recommended)**
+### 🚀 **Full Stack (Recommended)**
 ```bash
 # Start API server (Terminal 1)
 python ai_os/api_server.py
