@@ -254,53 +254,80 @@ ANTHROPIC_API_KEY=your_key_here
 ## 📚 Enhanced Documentation
 
 ### System Documentation
+
 - **ARCHITECTURE.md**: Complete system design and data flow
+
 - **CONSTITUTION.md**: Safety rules and prime directive
+
 - **TASKS.md**: System maintenance and development tasks
+
 - **AGENTS.md**: Product vision and capabilities
 
 ### Enhanced Documentation
+
 - **ERROR_HANDLING_WORKFLOW.md**: Systematic error resolution process
+
 - **ui/README.md**: Complete UI setup and usage guide
+
 - **api_server.py**: Inline API documentation (visit /docs)
 
 ### Validation & Demonstration
+
 - **validate_enhanced_ai_os.py**: System validation script
+
 - **demo_enhanced_ai_os.py**: Enhanced capabilities demonstration
 
 ## 🛡️ Safety & Security
 
 - **No Autonomous Execution**: System never acts without user initiation
+
 - **No System Modification**: Never modifies OS files without explicit approval
+
 - **No Data Exfiltration**: Never sends user data to cloud without consent
+
 - **Complete Audit Trail**: All actions logged and monitored
+
 - **Automatic Rollback**: System state captured before dangerous operations
 
 ## 📊 Enhanced Performance
 
 ### System Performance
+
 - **Voice to Text**: <3 seconds for voice-to-text
+
 - **Skill Generation**: <5 seconds for enhanced skill creation
+
 - **Execution Time**: <30 seconds for typical workflows
+
 - **Memory Usage**: <500MB memory, <10% CPU
+
 - **Local Processing**: 95%+ of operations performed locally
 
 ### Enhanced Features Performance
+
 - **Model Selection**: <1 second for intelligent model decisions
+
 - **Progressive Loading**: <2 seconds for skill discovery
+
 - **API Response**: <200ms for REST endpoints
+
 - **UI Rendering**: <100ms for interface
   interactions
+
 - **Security Checks**: <50ms for runtime validation
 
 ### Validation Performance
+
 - **System Validation**: <10 seconds for complete validation
+
 - **Demo Execution**: <30 seconds for full demonstration
+
 - **Error Recovery**: <5 seconds for systematic error handling
 
 ## 🤝 Contributing
 
-See `.windsurf/CASCADE_SKILLS.md` for development lessons learned and best practices.
+See `.windsurf/CASCADE_SKILLS.md` for development lessons learned
+and best practices.
 
 ## 📄 License
 
