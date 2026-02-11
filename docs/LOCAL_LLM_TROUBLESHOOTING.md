@@ -45,6 +45,44 @@ curl -fsSL https://ollama.ai/install.sh | sh
 ollama pull llama3
 ```
 
+### **Issue 3: macOS Compatibility**
+**Symptoms**:
+```
+Error: kLSIncompatibleSystemVersionErr: The app cannot run on the current OS version
+```
+
+**Root Cause**: Ollama version incompatible with macOS 12.7.6 (Monterey)
+
+**Solution**: Install compatible Ollama version
+```bash
+# Download compatible binary (v0.1.17 for macOS 12.7.6)
+curl -L https://github.com/ollama/ollama/releases/download/v0.1.17/ollama-darwin -o ollama-binary
+chmod +x ollama-binary
+sudo mv ollama-binary /usr/local/bin/ollama
+
+# Start service
+nohup ollama serve > ollama.log 2>&1 &
+```
+
+### **Issue 4: Disk Space Full**
+**Symptoms**:
+```
+Error: no space left on device
+```
+
+**Root Cause**: Insufficient disk space for model downloads
+
+**Solution**: Clear disk space or use smaller models
+```bash
+# Check disk space
+df -h
+
+# Use smaller models (if space available)
+ollama pull qwen2:0.5b  # ~300MB vs 4.7GB for llama3
+
+# Or clear space in ~/Downloads, ~/Desktop, etc.
+```
+
 ### **Issue 3: Proxy Interference**
 **Symptoms**: Requests to localhost being routed through proxy
 
