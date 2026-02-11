@@ -112,7 +112,8 @@ class ContextSwitcher:
         # Initialize local agent
         self.local_agent = LocalLMAgent(
             provider=local_provider,
-            model_name=local_model
+            model_name=local_model,
+            base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
         )
         
         # Cloud provider configuration

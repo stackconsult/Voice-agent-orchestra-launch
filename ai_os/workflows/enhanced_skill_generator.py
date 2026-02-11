@@ -14,6 +14,7 @@ Usage:
 import asyncio
 import json
 import logging
+import os
 import re
 import shutil
 import yaml
@@ -155,7 +156,9 @@ class EnhancedSkillGenerator:
         skills_dir: Optional[Path] = None,
         template_dir: Optional[Path] = None
     ):
-        self.local_lm_agent = local_lm_agent or LocalLMAgent()
+        self.local_lm_agent = local_lm_agent or LocalLMAgent(
+            base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+        )
         self.skills_dir = skills_dir or Path("./skills")
         self.template_dir = template_dir or Path("./templates")
         self.model_selector = ModelSelector()

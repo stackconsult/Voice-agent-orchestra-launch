@@ -9,6 +9,7 @@ Handles name sanitization, template management, and skill organization.
 import asyncio
 import json
 import logging
+import os
 import re
 import time
 from datetime import datetime
@@ -72,7 +73,9 @@ class SkillGenerator:
             skills_dir: Directory to store generated skills
             template_dir: Directory containing skill templates
         """
-        self.local_lm_agent = local_lm_agent or LocalLMAgent()
+        self.local_lm_agent = local_lm_agent or LocalLMAgent(
+            base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+        )
         self.skills_dir = skills_dir or Path("./skills")
         self.template_dir = template_dir or Path("./templates")
         

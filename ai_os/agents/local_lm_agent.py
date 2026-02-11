@@ -17,6 +17,7 @@ import subprocess
 import requests
 from enum import Enum
 import aiohttp
+from urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)
 
@@ -103,8 +104,16 @@ class LocalLMAgent:
         """Test connection to local LLM provider."""
         try:
             if self.provider == LocalLMProvider.OLLAMA:
-                # Test Ollama connection
-                response = requests.get(f"{self.base_url}/api/tags", timeout=5)
+                # Test Ollama connection with proper URL handling
+                parsed_url = urlparse(self.base_url)
+                test_url = f"{self.base_url}/api/tags"
+                logger.info(f"Testing Ollama connection to: {test_url}")
+                logger.info(f"Parsed URL - host: '{parsed_url.hostname}', port: {parsed_url.port}")
+                
+                # Use session with no proxy for local connections
+                session = requests.Session()
+                session.trust_env = False  # Don't use proxy settings from environment
+                response = session.get(test_url, timeout=5)
                 if response.status_code == 200:
                     models = response.json().get("models", [])
                     model_names = [m["name"] for m in models]
