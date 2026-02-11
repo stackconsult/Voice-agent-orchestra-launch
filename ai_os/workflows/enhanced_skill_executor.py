@@ -19,6 +19,14 @@ from dataclasses import asdict
 from ..agents.local_lm_agent import LocalLMAgent
 from ..agents.offline_online_context_switcher import ContextSwitcher, ProcessingMode
 
+# Import error handling
+from ..core import (
+    ErrorSeverity, ErrorCategory, ErrorContext, 
+    SkillErrorHandler, get_error_handler,
+    WorkflowErrorHandler, get_workflow_error_handler,
+    WorkflowStep, WorkflowContext, workflow_error_handler
+)
+
 logger = logging.getLogger(__name__)
 
 class SecurityViolationError(Exception):
@@ -31,16 +39,50 @@ class EnhancedSkillExecutor:
         self.workspace_dir.mkdir(parents=True, exist_ok=True)
         self.context_switcher = ContextSwitcher()
         
+        # Initialize error handlers
+        self.error_handler = get_error_handler()
+        self.workflow_error_handler = get_workflow_error_handler()
+        
     async def execute_skill(self, skill_name: str, parameters: Dict[str, Any] = None):
         """
-        Main entry point to run a skill.
+        Main entry point to run a skill with comprehensive error handling.
         """
+        try:
+            skill_path = Path(f"./skills/{skill_name}")
+            workflow_file = skill_path / "workflow.yaml"
+            
+            if not workflow_file.exists():
+                raise FileNotFoundError(f"Skill '{skill_name}' not found at {skill_path}")
+            
+            # Create error context
+            error_context = ErrorContext(
+                skill_name=skill_name,
+                execution_environment="enhanced_skill_executor"
+            )
+            
+            # Execute with error handling
+            return await self._execute_skill_with_error_handling(
+                skill_name, parameters, error_context
+            )
+            
+        except Exception as e:
+            # Handle skill-level errors
+            error_report = await self.error_handler.handle_error(
+                e, 
+                ErrorContext(skill_name=skill_name)
+            )
+            raise Exception(f"Skill execution failed: {error_report.user_friendly_message}") from e
+    
+    async def _execute_skill_with_error_handling(
+        self, 
+        skill_name: str, 
+        parameters: Dict[str, Any], 
+        error_context: ErrorContext
+    ):
+        """Execute skill with comprehensive error handling"""
         skill_path = Path(f"./skills/{skill_name}")
         workflow_file = skill_path / "workflow.yaml"
         
-        if not workflow_file.exists():
-            raise FileNotFoundError(f"Skill '{skill_name}' not found at {skill_path}")
-            
         # 1. Load Workflow Definition
         with open(workflow_file, 'r') as f:
             workflow_config = yaml.safe_load(f)
