@@ -40,10 +40,20 @@ python3 validate_enhanced_ai_os.py
 
 ## ⚠️ Common Failure Points
 
-### **Voice Dependencies**
+### **Local LLM Issues**
 - **Issue**: `ModuleNotFoundError: sounddevice`
 - **Fix**: Run `brew install portaudio` then reinstall dependencies
 - **Prevention**: Always run complete installation script
+
+### **Local LLM URL Parsing**
+- **Issue**: `HTTPConnectionPool(host='http', port=80)` 
+- **Fix**: Use `os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")`
+- **Prevention**: Always read environment variables, never hardcode URLs
+
+### **Ollama Connection Refused**
+- **Issue**: `[Errno 61] Connection refused`
+- **Fix**: Start Ollama service with `ollama serve`
+- **Prevention**: Ensure Ollama is installed and running before use
 
 ### **API Server Imports**
 - **Issue**: `ImportError: attempted relative import`
