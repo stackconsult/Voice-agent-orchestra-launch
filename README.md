@@ -232,23 +232,57 @@ python demo_enhanced_ai_os.py
 
 ## 🔧 Configuration
 
-### Local LLM Setup
+### 🚀 Complete Installation (Recommended)
+
+```bash
+# Run comprehensive installation script
+./install_complete.sh
+```
+
+This script handles:
+- Python virtual environment setup
+- All dependency installation (voice, API, UI)
+- System dependencies (FFmpeg, Ollama, whisper.cpp)
+- Environment configuration
+- Validation and testing
+
+### 📦 Manual Installation
+
+#### Local LLM Setup
 
 ```bash
 # Install Ollama
 curl -fsSL https://ollama.ai/install.sh | sh
 
-# Pull a model
-ollama pull llama2
+# Pull model
+ollama pull llama3
 ```
 
-### Cloud AI Setup (Optional)
-
-Add your API keys to `.env`:
+#### Environment Setup
 
 ```bash
+# Copy environment template
+cp .env.example .env
+
+# Add your API keys
 OPENAI_API_KEY=your_key_here
 ANTHROPIC_API_KEY=your_key_here
+GEMINI_API_KEY=your_key_here
+```
+
+#### Dependencies
+
+```bash
+# Python dependencies
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# UI dependencies
+cd ui && npm install && cd ..
+
+# System dependencies
+brew install ffmpeg portaudio
 ```
 
 ## 📚 Enhanced Documentation
@@ -266,6 +300,8 @@ ANTHROPIC_API_KEY=your_key_here
 ### Enhanced Documentation
 
 - **ERROR_HANDLING_WORKFLOW.md**: Systematic error resolution process
+
+- **DEPENDENCY_MANAGEMENT.md**: Complete dependency guide and troubleshooting
 
 - **ui/README.md**: Complete UI setup and usage guide
 
