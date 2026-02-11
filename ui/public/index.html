@@ -28,6 +28,7 @@
         .header {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             padding: 1rem 2rem;
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
             display: flex;
@@ -78,6 +79,7 @@
             width: 300px;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             padding: 1.5rem;
             overflow-y: auto;
             border-right: 1px solid rgba(255, 255, 255, 0.2);
@@ -93,6 +95,7 @@
         .tabs {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             display: flex;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
@@ -120,6 +123,7 @@
             overflow-y: auto;
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         .skill-list {
@@ -206,6 +210,36 @@
 
         .btn-danger:hover {
             background: #ff5252;
+        }
+
+        .quick-actions {
+            margin-bottom: 2rem;
+        }
+
+        .btn-full-width {
+            width: 100%;
+        }
+
+        .btn-margin-bottom {
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-item {
+            margin-bottom: 1rem;
+        }
+
+        .status-success {
+            color: #51cf66;
+        }
+
+        .component-item {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .no-skills-message {
+            text-align: center;
+            color: #666;
         }
 
         .form-group {
@@ -354,11 +388,11 @@
         <div class="main-content">
             <aside class="sidebar">
                 <h3>🎯 Quick Actions</h3>
-                <div style="margin-bottom: 2rem;">
-                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 0.5rem;" onclick="refreshSkills()">
+                <div class="quick-actions">
+                    <button class="btn btn-primary btn-full-width btn-margin-bottom" onclick="refreshSkills()">
                         🔄 Refresh Skills
                     </button>
-                    <button class="btn btn-secondary" style="width: 100%;" onclick="checkHealth()">
+                    <button class="btn btn-secondary btn-full-width" onclick="checkHealth()">
                         🏥 Check Health
                     </button>
                 </div>
@@ -474,19 +508,19 @@
         function updateSystemStats(data) {
             const statsDiv = document.getElementById('systemStats');
             statsDiv.innerHTML = `
-                <div style="margin-bottom: 1rem;">
-                    <strong>Status:</strong> <span style="color: #51cf66;">${data.status}</span>
+                <div class="stats-item">
+                    <strong>Status:</strong> <span class="status-success">${data.status}</span>
                 </div>
-                <div style="margin-bottom: 1rem;">
+                <div class="stats-item">
                     <strong>Version:</strong> ${data.version}
                 </div>
-                <div style="margin-bottom: 1rem;">
+                <div class="stats-item">
                     <strong>Skills:</strong> ${data.skills_available}
                 </div>
                 <div>
                     <strong>Components:</strong>
                     ${Object.entries(data.components).map(([key, status]) => 
-                        `<div style="font-size: 0.9rem; color: #666;">• ${key}: ${status}</div>`
+                        `<div class="component-item">• ${key}: ${status}</div>`
                     ).join('')}
                 </div>
             `;
@@ -514,7 +548,7 @@
             const skillsList = document.getElementById('skillsList');
             
             if (skills.length === 0) {
-                skillsList.innerHTML = '<p style="text-align: center; color: #666;">No skills found. Generate one to get started!</p>';
+                skillsList.innerHTML = '<p class="no-skills-message">No skills found. Generate one to get started!</p>';
                 return;
             }
 

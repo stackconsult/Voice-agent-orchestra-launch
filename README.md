@@ -1,29 +1,51 @@
 # Enhanced AI-OS - Voice-Driven Workflow Automation System
 
-A complete, production-ready AI Operating System with **Enhanced Skill Engine** for voice-driven workflow automation. Features intelligent model selection, progressive loading architecture, security enforcement, and a modern Electron UI interface. Processes voice commands offline, automatically generates workflows using local LLMs, executes workflows locally, seamlessly falls back to cloud AI for complex tasks, and provides real-time monitoring with comprehensive error handling.
+A complete, production-ready AI Operating System with **Enhanced Skill Engine**
+for voice-driven workflow automation. Features intelligent model selection,
+progressive loading architecture, security enforcement, and a modern Electron
+UI interface. Processes voice commands offline, automatically generates
+workflows using local LLMs, executes workflows locally, seamlessly falls back
+to cloud AI for complex tasks, and provides real-time monitoring with
+comprehensive error handling.
 
 ## 🎯 Enhanced Features
 
 ### 🚀 Enhanced Skill Engine
+
 - **Intelligent Model Selection**: Automatic local vs cloud model decisions
+
 - **Progressive Loading Architecture**: Fast skill discovery with heavy context on-demand
+
 - **Security Enforcement**: Runtime architectural compliance and network blocking
+
 - **YAML Frontmatter Skills**: Machine-readable triggers and configuration
+
 - **Meta-Skill Creator**: Self-referential skill generation system
 
 ### 🎨 Modern UI Interface
+
 - **Electron Application**: Cross-platform desktop interface
+
 - **Real-time Dashboard**: Live skill execution monitoring
+
 - **Interactive Skill Management**: Visual skill creation and execution
+
 - **API Integration**: RESTful backend with comprehensive endpoints
 
 ### 🏗️ Core Features
+
 - **Offline-First Processing**: Local voice transcription and workflow generation
+
 - **Cloud Fallback**: Intelligent switching to cloud AI when local processing is insufficient
+
 - **Multi-Execution Support**: Terminal commands, AppleScript, and Python scripts
+
 - **Real-Time Monitoring**: Comprehensive execution monitoring with audit trails
+
 - **System Snapshots**: Automatic snapshots and rollback for safety
+
 - **Cost Tracking**: Monitor and control cloud AI costs
+
 - **Safety First**: Built-in safety checks and restrictions
 
 ## 🏗️ System Architecture
@@ -113,6 +135,7 @@ cd ui && npm install && cd ..
 
 # Validate the enhanced system
 python validate_enhanced_ai_os.py
+```
 
 # Initialize the system
 python -m ai_os.main --init
